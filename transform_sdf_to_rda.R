@@ -10,13 +10,14 @@ layout <- layout.format('[~l] [~t] [~n.~f] ~m')
 flog.logger(DEBUG, appender=appender.file('sdf3rda.log')))
 flog.layout(layout)
 flog.appender(appender.console)
+sdf_2_rda<-function(file="stdin", debug=F)
 
 init_environment <- function(){
    (base.dir <- getwd())
    if (!is.null(base.dir)) setwd(base.dir) 
 }
 
-sdf_2_rda<-function(file=, debug=T) {  
+sdf_2_rda<-function(file="stdin", debug=F) {  
    flog.info("Reading sdf set") 
    sdfset<-read.SDFset(file)
    flog.info("Save as apset set") 
@@ -27,7 +28,11 @@ sdf_2_rda<-function(file=, debug=T) {
 }
 
 upload_file<-function(files, debug=TRUE) {
+   files<-list.files(pattern=".sdf", recursive=T)
+}
 
-   files<-list.files(pattern=".sdf", recursive=F)
+cleanup<-function() {
+  
+
 }
 
