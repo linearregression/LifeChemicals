@@ -1,18 +1,15 @@
 ##################
-# Reads SDF file from STDIN as stream then 
-# transform to RDA format
+# Reads SDF filename from STDIN 
+# transform to RDA format, save this to output folder as in environment variable 
+# DATADIR
 ##################
 options(error=traceback)
 
 library("ChemmineR")
 library("futile.logger")
 
-#flog.logger("sdf2rda", DEBUG, appender=appender.file('sdf2rda.log'))
-#flog.layout(layout.format("[~l] [~t] [~n.~f] ~m"))
-#flog.appender(appender.file("sdf2rda.log"), name='ROOT')
-
 init_environment<-function() {
-   flog.logger("sdf2rda", DEBUG, appender=appender.file('sdf3rda.log'))
+   flog.logger(ROOT, DEBUG, appender=appender.file('sdf3rda.log'))
    #flog.layout(layout.format("[~l] [~t] [~n.~f] ~m"))
    flog.appender(appender.console, "sdf2rda")
    flog.info("Initializing environment")
