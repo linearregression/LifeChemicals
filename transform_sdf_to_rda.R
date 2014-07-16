@@ -9,10 +9,9 @@ library("futile.logger")
 sdf_2_rda<-function(file="stdin", debug=F)
 
 init_environment<-function() {
-   layout<-layout.format('[~l] [~t] [~n.~f] ~m')
-   flog.logger(DEBUG, appender=appender.file('sdf3rda.log'))
-   flog.layout(layout)
-   flog.appender(appender.console)
+   flog.logger("sdf2rda", DEBUG, appender=appender.file('sdf3rda.log'))
+   flog.layout(layout.format("[~l] [~t] [~n.~f] ~m"))
+   flog.appender(appender.console, "sdf2rda")
    (base.dir<-getwd())
    if (!is.null(base.dir)) {
       setwd(base.dir)
@@ -24,11 +23,11 @@ init_environment<-function() {
 }
 
 create_if_absent<-function(basedir, dirname) {
-   if (!is.null(basedir)) {
+   if (!is.null(basedir) && !is.null(dirname)) {
       newfile<-paste(basedir, dirname, sep="/")
       if (!file.exists(newfile)){
           flog.info("~s not found. Creating ~s", newfile)
-          file.create(newfile, showWarnings=T)
+          dir.create(newfile, showWarnings=T)
           flog.info("~s Created", newfile)
       }
       else {
