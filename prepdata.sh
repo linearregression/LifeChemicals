@@ -18,5 +18,5 @@ if [[ -z "$DATADIR" ]]; then
 fi
 
 ls $DATADIR/*.zip | parallel unzip -u -d $OUTDIR
-# ls $OUTDIR/*.sdf | parallel Rscript --vanilla --slave OpenTheSDFs.R {}
+# ls $OUTDIR/*.sdf | parallel Rscript --vanilla --slave OpenTheSDFs.R {} 
 -

@@ -25,7 +25,7 @@ apset<-sdf2ap(sdfset)
 #sdfset<-sdfset[-which(sapply(as(apset, "list"), length)==1)]
 #apset<-apset[-which(sapply(as(apset, "list"), length)==1)]
 ##################
-save.image(file=gsub(".sdf", "_Image.rda", files[p]), compress=T)
+save.image(file=gsub(".sdf", "_Image.rda", args), compress=TRUE)
 ##################
 #}
 ##################
