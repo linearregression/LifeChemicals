@@ -15,7 +15,7 @@ init_environment<-function() {
    (base.dir<-getwd())
    if (!is.null(base.dir)) {
       setwd(base.dir)
-      flog.info("Current base dir: ~s", base.dir)
+      flog.info("Current base dir: %s", base.dir)
       create_if_absent(base.dir,"image")
       create_if_absent(base.dir,"log")
       create_if_absent(base.dir,"data/sdf")
@@ -26,12 +26,12 @@ create_if_absent<-function(basedir, dirname) {
    if (!is.null(basedir) && !is.null(dirname)) {
       newfile<-paste(basedir, dirname, sep="/")
       if (!file.exists(newfile)){
-          flog.info("~s not found. Creating ~s", newfile)
+          flog.info("%s not found. Creating %s", newfile)
           dir.create(newfile, showWarnings=T)
-          flog.info("~s Created", newfile)
+          flog.info("%s Created", newfile)
       }
       else {
-          flog.info("~s already exists", newfile)
+          flog.info("%s already exists", newfile)
       }
    } 
 }
@@ -42,7 +42,8 @@ get_image_filename<-function(folder="image",file=NULL) {
    }
 }
 
-sdf_2_rda <- function(file="stdin", debug=FALSE) {  
+sdf_2_rda <- function(file="stdin", debug=FALSE) { 
+   flog.appender(appender=appender.file('sdf3rda.log'), "sdf2rda") 
    flog.info("Reading sdf set") 
    sdfset<-read.SDFset(file)
    flog.info("Save as apset set") 
@@ -58,23 +59,23 @@ upload_file<-function(files, debug=TRUE) {
 }
 
 get_rda_files<-function() {
-   list_files(cwd=".", extension=".rda")
+   list_files(cwd=".", extension="rda")
 }
 
 get_sdf_files<-function(){
-   list_files(cwd=".", extension=".sdf")
+   list_files(cwd=".", extension="sdf")
 }
 
-list.files<-function (cwd, extension) {
+list_files<-function (cwd, extension) {
   ext<-sprintf("\\.%s$",extension)
-  flog.info("Current directory: %s extension: 5s", cwd, ext)
+  flog.info("Current directory: %s extension: %s", cwd, extension)
   fs<-list.files(path=cwd, recursive=TRUE, full.names=TRUE, pattern=ext)
-
 }
 
 cleanup<-function() {
-  rda.files<-list.files(path=getwd(), recursive=T, full.names=T, pattern="\\.rda$")
-  sdf.files<-list.files(path=getwd(), recursive=T, full.names=T, pattern="\\.sdf$")
+  cwd<-getwd()
+  rda.files<-list_files(cwd=cwd, extension="rda")
+  sdf.files<-list_files(cwd=cwd, extension="sdf")
   rm(rda.files)
   rm(sdf.files)
 }
