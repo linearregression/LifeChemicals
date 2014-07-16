@@ -13,27 +13,35 @@ init_environment<-function() {
    flog.layout(layout.format("[~l] [~t] [~n.~f] ~m"))
    flog.appender(appender.console, "sdf2rda")
    (base.dir<-getwd())
-   if (!is.null(base.dir)) {
-      setwd(base.dir)
-      flog.info("Current base dir: %s", base.dir)
-      create_if_absent(base.dir,"image")
-      create_if_absent(base.dir,"log")
-      create_if_absent(base.dir,"data/sdf")
-   }
+   assert(expr=!missing(base.dir), error=c("Cannot get working directory"), quitOnError=TRUE)
+   setwd(base.dir)
+   flog.info("Current base dir: %s", base.dir)
+   create_if_absent(basedir=base.dir, dirname="image")
+   create_if_absent(basedir=base.dir, dirname="log")
+   create_if_absent(basedir=base.dir, dirname="data/sdf")
+}
+
+assert <- function (expr, error, quitOnError) {
+  if (!expr) {
+     flog.error("Reason: %s", sprintf("%s ", paste(error, collapse=", ")))
+     stop(error, call. = TRUE)
+     if (quitOnError) quit(save='n')
+  } 
 }
 
 create_if_absent<-function(basedir, dirname) {
-   if (!is.null(basedir) && !is.null(dirname)) {
-      newfile<-paste(basedir, dirname, sep="/")
-      if (!file.exists(newfile)){
-          flog.info("%s not found. Creating %s", newfile)
-          dir.create(newfile, showWarnings=T)
-          flog.info("%s Created", newfile)
-      }
-      else {
-          flog.info("%s already exists", newfile)
-      }
-   } 
+   assert(expr=!is.null(basedir), error=c("Base Dir is missing"), quitOnError=TRUE)
+   assert(expr=!is.null(dirname), error=c("Dirname is missing"), quitOnError=TRUE)
+   newfile<-paste(basedir, dirname, sep="/")
+   if (!file.exists(newfile)){
+       flog.info("%s not found. Creating %s", newfile, newfile)
+       ret = dir.create(newfile, showWarnings=TRUE)
+       assert(expr=ret, error=c("Cannot create dir: ", newfile), quitOnError=TRUE)
+       flog.info("Create: %s Status:%s", newfile, ret)
+   }
+   else {
+       flog.info("%s already exists", newfile)
+   }
 }
 
 get_image_filename<-function(folder="image",file=NULL) {
