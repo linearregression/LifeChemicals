@@ -6,22 +6,21 @@
 library("ChemmineR")
 library("futile.logger")
 
-sdf_2_rda<-function(file="stdin", debug=F)
-
 init_environment<-function() {
    flog.logger("sdf2rda", DEBUG, appender=appender.file('sdf3rda.log'))
    flog.layout(layout.format("[~l] [~t] [~n.~f] ~m"))
    flog.appender(appender.console, "sdf2rda")
+   flog.info("Initializing environment")
    folder<-Sys.getenv("DATADIR")
-   folderNotEmpty<-nchar(folder)>0
-   assert(expr=length, error=c("Env variable DATADIR not set: "), quitOnError=TRUE)
+   flog.info("Output image folder is %s", folder)
+   assert(expr=(nchar(folder) > 0), error=c("Env variable DATADIR not set: "), quitOnError=TRUE)
    (base.dir<-getwd())
    assert(expr=!missing(base.dir), error=c("Cannot get working directory"), quitOnError=TRUE)
    setwd(base.dir)
    flog.info("Current base dir: %s", base.dir)
    create_if_absent(basedir=base.dir, dirname="image")
    create_if_absent(basedir=base.dir, dirname="log")
-   create_if_absent(basedir=base.dir, dirname="data/sdf")
+   #create_if_absent(basedir=base.dir, dirname="data/sdf")
 }
 
 assert <- function (expr, error, quitOnError) {
@@ -40,7 +39,7 @@ create_if_absent<-function(basedir, dirname) {
        flog.info("%s not found. Creating %s", newfile, newfile)
        ret = dir.create(newfile, showWarnings=TRUE)
        assert(expr=ret, error=c("Cannot create dir: ", newfile), quitOnError=TRUE)
-       flog.info("Create: %s Status:%s", newfile, ret)
+       flog.info("Create: %s Status: %s", newfile, ret)
    }
    else {
        flog.info("%s already exists", newfile)
@@ -95,7 +94,8 @@ remove_processed_sdf<-function(sdffile, shouldRemove) {
 main<-function() {
   init_environment()
   args<-commandArgs(trailingOnly=TRUE)
+  flog.info("Going to process file%s", args)
   sdf_2_rda(file=args, debug=FALSE)
-  upload_file()
-  print_result()
 }
+
+main()
