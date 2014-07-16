@@ -1,16 +1,18 @@
 ##################
 library("ChemmineR")
+options(echo=TRUE)
 ##################
-rm(list=ls())
+#rm(list=ls())
 ##################
-files<-list.files(pattern=".sdf", recursive=F)
+#files<-list.files(pattern=".sdf", recursive=F)
 ##################
+args<-commandArgs(trailingOnly=TRUE)
+print(args)
 
-
-p<-1
+#p<-1
 #DoCheminformatics<-function(p){
 ##################
-sdfset<-read.SDFset(files[p])
+sdfset<-read.SDFset(args)
 ##################
 #valid <- validSDF(sdfset)
 #sdfset <- sdfset[valid]

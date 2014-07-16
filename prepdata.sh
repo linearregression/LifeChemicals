@@ -7,7 +7,7 @@
 echo on
 set -e
 export DATADIR="/home/developer/Dropbox/DataLifeChemicals"
-export OUTDIR="/opt/andrew/data"
+export OUTDIR="/opt/andrew/LifeChemicals/data"
 
 command -v parallel >/dev/null 2>&1 || { echo "Require parallel but not installed.  Aborting." >&2; exit 1; }
 
@@ -18,3 +18,5 @@ if [[ -z "$DATADIR" ]]; then
 fi
 
 ls $DATADIR/*.zip | parallel unzip -u -d $OUTDIR
+ls $OUTDIR/*.sdf | parallel Rscript --vanilla OpenTheSDFs.R 
+-
