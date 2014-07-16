@@ -2,13 +2,18 @@
 # Reads SDF file from STDIN as stream then 
 # transform to RDA format
 ##################
+options(error=traceback)
 
 library("ChemmineR")
 library("futile.logger")
 
+#flog.logger("sdf2rda", DEBUG, appender=appender.file('sdf2rda.log'))
+#flog.layout(layout.format("[~l] [~t] [~n.~f] ~m"))
+#flog.appender(appender.file("sdf2rda.log"), name='ROOT')
+
 init_environment<-function() {
    flog.logger("sdf2rda", DEBUG, appender=appender.file('sdf3rda.log'))
-   flog.layout(layout.format("[~l] [~t] [~n.~f] ~m"))
+   #flog.layout(layout.format("[~l] [~t] [~n.~f] ~m"))
    flog.appender(appender.console, "sdf2rda")
    flog.info("Initializing environment")
    folder<-Sys.getenv("DATADIR")
@@ -20,7 +25,6 @@ init_environment<-function() {
    flog.info("Current base dir: %s", base.dir)
    create_if_absent(basedir=base.dir, dirname="image")
    create_if_absent(basedir=base.dir, dirname="log")
-   #create_if_absent(basedir=base.dir, dirname="data/sdf")
 }
 
 assert <- function (expr, error, quitOnError) {
@@ -48,32 +52,43 @@ create_if_absent<-function(basedir, dirname) {
 
 get_image_filename<-function(file) {
    if(!is.null(file)) {
+      file2<-basename(file)
       folder<-Sys.getenv("DATADIR")
-      paste(getwd(),folder,file,sep="/")
+      paste(folder,file2,sep="/")
    }
 }
 
-sdf_2_rda <- function(file, debug) { 
-   flog.appender(appender=appender.file('sdf3rda.log'), "sdf2rda") 
+sdf_2_rda <- function(file, debug) {
    flog.info("Reading sdf set") 
    sdfset<-read.SDFset(file)
    flog.info("Save as apset set") 
    apset<-sdf2ap(sdfset)
    outputDir<-get_image_filename(file=file)
-   flog.info("Save as compressed rda image to %s", outputDir)
-   image_file<-get_image_filename(folder=outputdir, file=gsub(".sdf", "_Image.rda", file))
-   ret<-save.image(file=image_file, compress="bzip2", safe=TRUE)
-   flog.info("Saved %s_Image.rda", file)
-   remove_processed_sdf(file=file, shouldRemove=ret)
+   flog.info("Save as compressed rda image to %s ", outputDir)
+   image_file<-get_image_filename(file=gsub(".sdf", "_Image.rda", file))
+   tryCatch({
+     save.image(file=image_file, compress="bzip2", safe=TRUE)
+     flog.info("Saved %s_Image.rda.", file)
+     remove_processed_sdf(sdffile=file, shouldRemove=TRUE)
+      
+     }, warning = function(warn) {
+        flog.warn("Unexpected warning: %s", warn)
+     }, error = function(err) {
+        flog.error("Unexpected error: %s", err)
+     }, finally = {
+	flog.info("Done execution")
+     }
+   ) 
 }
 
 remove_processed_sdf<-function(sdffile, shouldRemove) {
    if(shouldRemove) {
      assert(expr=!is.null(sdffile), error=c("Filename is missing"), quitOnError=FALSE)
-     files.remove(sdffile)
-     flog.info("Finished processing. Remove sdf %s", file)
+     flog.info("Finished processing. Removing sdf %s", sdffile)
+     file.remove(sdffile)
+     flog.info("Removed sdf %s", sdffile)
    } else {
-     flog.info("Not finish processing %s", file)
+     flog.info("Not finish processing %s", sdffile)
    }
 }
 
@@ -94,7 +109,8 @@ remove_processed_sdf<-function(sdffile, shouldRemove) {
 main<-function() {
   init_environment()
   args<-commandArgs(trailingOnly=TRUE)
-  flog.info("Going to process file%s", args)
+  assert(expr=(nchar(args) >0 ), error=c("No input file provided"), quitOnError=TRUE)
+  flog.info("Going to process file %s", args)
   sdf_2_rda(file=args, debug=FALSE)
 }
 
