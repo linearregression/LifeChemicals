@@ -8,10 +8,10 @@ options(error=traceback)
 library("ChemmineR")
 library("futile.logger")
 
-init_environment<-function() {
-   flog.logger(ROOT, DEBUG, appender=appender.file('sdf3rda.log'))
+init_environment<-function(logfile) {
+   flog.logger("ROOT", DEBUG, appender=appender.file(paste(logfile, ".log", sep="")))
    #flog.layout(layout.format("[~l] [~t] [~n.~f] ~m"))
-   flog.appender(appender.console, "sdf2rda")
+   #flog.appender(appender.console, "sdf2rda")
    flog.info("Initializing environment")
    folder<-Sys.getenv("DATADIR")
    flog.info("Output image folder is %s", folder)
@@ -104,9 +104,9 @@ remove_processed_sdf<-function(sdffile, shouldRemove) {
 #}
 
 main<-function() {
-  init_environment()
   args<-commandArgs(trailingOnly=TRUE)
   assert(expr=(nchar(args) >0 ), error=c("No input file provided"), quitOnError=TRUE)
+  init_environment(logfile=basename(args))
   flog.info("Going to process file %s", args)
   sdf_2_rda(file=args, debug=FALSE)
 }
