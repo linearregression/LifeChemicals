@@ -80,3 +80,10 @@ cleanup<-function() {
   rm(sdf.files)
 }
 
+main<-function() {
+  init_environment()
+  prep_data_files()
+  sdf_2_rda()
+  upload_file()
+  print_result()
+}
