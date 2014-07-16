@@ -31,15 +31,16 @@ create_if_absent<-function(basedir, dirname) {
           file.create(newfile, showWarnings=T)
           flog.info("~s Created", newfile)
       }
-   }
+      else {
+          flog.info("~s already exists", newfile)
+      }
+   } 
 }
 
 get_image_filename<-function(folder="image",file=NULL) {
-   ret<-NULL
    if(!is.null(file)) {
-      ret<-paste(getwd(),folder,file,sep="/")
+      paste(getwd(),folder,file,sep="/")
    }
-   return ret
 }
 
 sdf_2_rda <- function(file="stdin", debug=FALSE) {  
