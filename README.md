@@ -42,4 +42,6 @@ export OUTDIR="/opt/andrew/LifeChemicals/data"
 Simply run transformsdf2rda.sh
 * what you will see is that there are log files with the SAME name as the source sdf file
 * all RDA images files are output under folder as in DATADIR (your dropbox folder). Your Dropbox client will auto sync to your dropbox account
+* If rda images are successfully created and saved to DATADIR. That source sdf file is removed to conserve space. Also with the log files this allow you to resume where the error last stoppped you and continue process next on list.
 
+If execution fails
