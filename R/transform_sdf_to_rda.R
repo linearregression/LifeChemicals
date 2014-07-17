@@ -3,7 +3,9 @@
 # transform to RDA format, save this to output folder as in environment variable 
 # DATADIR
 ##################
-options(error=traceback)
+options(error=traceback, showWarnCalls=TRUE, showErrorCalls=TRUE)
+if (!exists('RUNNER_BASE')) RUNNER_BASE='/opt/andrew/LifeChemicals/R'
+source(sprintf("%s/util.R", RUNNER_BASE))
 
 library("ChemmineR")
 library("futile.logger")
@@ -24,28 +26,6 @@ init_environment<-function(logfile) {
    create_if_absent(basedir=base.dir, dirname="log")
 }
 
-assert <- function (expr, error, quitOnError) {
-  if (!expr) {
-     flog.error("Reason: %s", sprintf("%s ", paste(error, collapse=", ")))
-     stop(error, call. = TRUE)
-     if (quitOnError) quit(save='n')
-  } 
-}
-
-create_if_absent<-function(basedir, dirname) {
-   assert(expr=!is.null(basedir), error=c("Base Dir is missing"), quitOnError=TRUE)
-   assert(expr=!is.null(dirname), error=c("Dirname is missing"), quitOnError=TRUE)
-   newfile<-paste(basedir, dirname, sep="/")
-   if (!file.exists(newfile)){
-       flog.info("%s not found. Creating %s", newfile, newfile)
-       ret = dir.create(newfile, showWarnings=TRUE)
-       assert(expr=ret, error=c("Cannot create dir: ", newfile), quitOnError=TRUE)
-       flog.info("Create: %s Status: %s", newfile, ret)
-   }
-   else {
-       flog.info("%s already exists", newfile)
-   }
-}
 
 get_image_filename<-function(file) {
    if(!is.null(file)) {
