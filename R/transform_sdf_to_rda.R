@@ -56,14 +56,14 @@ get_image_filename<-function(file) {
 }
 
 sdf_2_rda <- function(file, debug) {
-   flog.info("Reading sdf set") 
-   sdfset<-read.SDFset(file)
-   flog.info("Save as apset set") 
-   apset<-sdf2ap(sdfset)
-   outputDir<-get_image_filename(file=file)
-   flog.info("Save as compressed rda image to %s ", outputDir)
-   image_file<-get_image_filename(file=gsub(".sdf", "_Image.rda", file))
    tryCatch({
+     flog.info("Reading sdf set") 
+     sdfset<-read.SDFset(file)
+     flog.info("Save as apset set") 
+     apset<-sdf2ap(sdfset)
+     outputDir<-get_image_filename(file=file)
+     image_file<-get_image_filename(file=gsub(".sdf", "_Image.rda", file))
+     flog.info("Save as compressed rda image to %s ", outputDir)
      save.image(file=image_file, compress="bzip2", safe=TRUE)
      flog.info("Saved %s_Image.rda.", file)
      remove_processed_sdf(sdffile=file, shouldRemove=TRUE)
