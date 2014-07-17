@@ -17,5 +17,5 @@ if [[ -z "$DATADIR" ]]; then
 	exit 1
 fi
 
-ls $OUTDIR/*.sdf | parallel Rscript --vanilla --slave OpenTheSDFs.R {}
+ls $OUTDIR/*.sdf | parallel Rscript --vanilla --slave ./R/transform_sdf_to_rda.R {}
 -
