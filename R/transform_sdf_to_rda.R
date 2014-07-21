@@ -12,6 +12,8 @@ source(sprintf("%s/util.R", RUNNER_BASE))
 library("ChemmineR")
 library("futile.logger")
 
+lastprocessed.log<-"lastprocessed.log"
+
 init_environment<-function(logfile="sdf2rda") {
    flog.logger("ROOT", DEBUG, appender=appender.file(paste(logfile, ".log", sep="")))
    #flog.layout(layout.format("[~l] [~t] [~n.~f] ~m"))
@@ -39,7 +41,7 @@ get_image_filename<-function(file) {
 
 sdf_2_rda <- function(file, debug) {
    tryCatch({
-     flog.info("Reading sdf set") 
+     flog.info("Reading sdf set: %s", file) 
      sdfset<-read.SDFset(file)
      flog.info("Save as apset set") 
      apset<-sdf2ap(sdfset)
@@ -60,35 +62,20 @@ sdf_2_rda <- function(file, debug) {
    ) 
 }
 
-remove_processed_sdf<-function(sdffile, shouldRemove=FALSE) {
+remove_processed_sdf<-function(sdffile, shouldRemove) {
    if(shouldRemove) {
      assert(expr=!is.null(sdffile), error=c("Filename is missing"), quitOnError=FALSE)
      flog.info("Finished processing. Removing sdf %s", sdffile)
      file.remove(sdffile)
      flog.info("Removed sdf %s", sdffile)
-     cat(paste(basename(sdffile)),file="lastprocessed.log")
+     cat(paste(basename(sdffile)),file=lastprocessed.log)
    } else {
      flog.info("Not finish processing %s", sdffile)
    }
 }
 
-#list_files<-function (cwd, extension) {
-#  ext<-sprintf("\\.%s$",extension)
-#  flog.info("Current directory: %s extension: %s", cwd, extension)
-#  fs<-list.files(path=cwd, recursive=TRUE, full.names=TRUE, pattern=ext)
-#}
-
-#cleanup<-function() {
-#  cwd<-getwd()
-#  rda.files<-list_files(cwd=cwd, extension="rda")
-#  sdf.files<-list_files(cwd=cwd, extension="sdf")
-#  rm(rda.files)
-#  rm(sdf.files)
-#}
-
 check_last_process<-function(currentFile=NULL) { 
-  if(!is.null(currentFile)) {
-     lastprocessed.log<-"lastprocessed.log"
+  if(!is.null(currentFile)) {     
      line<-readChar(lastprocessed.log, file.info(lastprocessed.log)$size)
      lastfile.processed<-gsub("[\r\n]", "", line)
      if(!is.null(lastfile.processed)) {
@@ -107,7 +94,9 @@ check_last_process<-function(currentFile=NULL) {
 main<-function() {
   args<-commandArgs(trailingOnly=TRUE)
   print(c("Start processing sdf file: ", args))
-  cat("",file="lastprocessed.log") #seed the lastprocessed.log
+  if(!file.exists(lastprocessed.log)) {
+     cat("",file=lastprocessed.log) #seed the lastprocessed.log
+  }
   assert(expr=(nchar(args) >0 ), error=c("No input file provided"), quitOnError=TRUE)
   init_environment(logfile=basename(args))
   flog.info("Going to process file %s", args)
