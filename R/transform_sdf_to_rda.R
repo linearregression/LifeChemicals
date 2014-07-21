@@ -76,7 +76,7 @@ remove_processed_sdf<-function(sdffile, shouldRemove) {
 }
 
 check_last_process<-function(currentFile=NULL) { 
-  if(!is.null(currentFile)) {     
+   if(!is.null(currentFile)) {     
      line<-readChar(lastprocessed.log, file.info(lastprocessed.log)$size)
      lastfile.processed<-gsub("[\r\n]", "", line)
      if(!is.null(lastfile.processed)) {
@@ -86,29 +86,29 @@ check_last_process<-function(currentFile=NULL) {
         print(c("Lastfile processed: ", previous.file, "current file: ",current.file))
         return((previous.file==current.file))
      } 
-  } 
-  flog.warn("Missing source file to process")
-  print("Missing source file to process")
-  FALSE
+   } 
+   flog.warn("Missing source file to process")
+   print("Missing source file to process")
+   FALSE
 }
 
 main<-function() {
-  args<-commandArgs(trailingOnly=TRUE)
-  print(c("Start processing sdf file: ", args))
-  if(!file.exists(lastprocessed.log)) {
-     cat("",file=lastprocessed.log) #seed the lastprocessed.log
-  }
-  assert(expr=(nchar(args) >0 ), error=c("No input file provided"), quitOnError=TRUE)
-  init_environment(logfile=basename(args))
-  flog.info("Going to process file %s", args)
-  isfileprocessed <- check_last_process(args)
-  if(!isfileprocessed) { #no need to start from scratch each time
-    print(c("This is a new sdf file: ", args))
-    sdf_2_rda(file=args, debug=FALSE)
-    print(c("Done processing sdf file: ", args))
-  } else {
-    print(c("File already processed: ", args))
- }
+   args<-commandArgs(trailingOnly=TRUE)
+   print(c("Start processing sdf file: ", args))
+   if(!file.exists(lastprocessed.log)) {
+      cat("",file=lastprocessed.log) #seed the lastprocessed.log
+   }
+   assert(expr=(nchar(args) >0 ), error=c("No input file provided"), quitOnError=TRUE)
+   init_environment(logfile=basename(args))
+   flog.info("Going to process file %s", args)
+   isfileprocessed <- check_last_process(args)
+   if(!isfileprocessed) { #no need to start from scratch each time
+      print(c("This is a new sdf file: ", args))
+      sdf_2_rda(file=args, debug=FALSE)
+      print(c("Done processing sdf file: ", args))
+   } else {
+     print(c("File already processed: ", args))
+   }
 }
 
 main()
