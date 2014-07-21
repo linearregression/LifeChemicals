@@ -63,6 +63,7 @@ sdf_2_rda <- function(file, debug) {
 }
 
 remove_processed_sdf<-function(sdffile, shouldRemove) {
+   print(c("Is ok to removing sdf file ", sdffile, "?",shouldRemove))
    if(shouldRemove) {
      assert(expr=!is.null(sdffile), error=c("Filename is missing"), quitOnError=FALSE)
      flog.info("Finished processing. Removing sdf %s", sdffile)
