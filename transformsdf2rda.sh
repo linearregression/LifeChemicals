@@ -17,6 +17,13 @@ if [[ -z "$DATADIR" ]]; then
 	exit 1
 fi
 
+if [[ -z "$OUTDIR" ]]; then
+	echo "Make sure you set \$OUTDIR before running this script"
+	echo "e.g. export DATADIR=\"/path/to/yourLifeChemicalsdfzip\""
+	exit 1
+fi
+
+
 #sort file size in increasing order, so smaller files are processed first
 ls -rS $OUTDIR/*.sdf | parallel Rscript --vanilla --slave ./R/transform_sdf_to_rda.R {}
 -
