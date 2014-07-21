@@ -87,10 +87,12 @@ remove_processed_sdf<-function(sdffile, shouldRemove=FALSE) {
 
 main<-function() {
   args<-commandArgs(trailingOnly=TRUE)
+  print(c("Start processing sdf file: ", args)
   assert(expr=(nchar(args) >0 ), error=c("No input file provided"), quitOnError=TRUE)
   init_environment(logfile=basename(args))
   flog.info("Going to process file %s", args)
   sdf_2_rda(file=args, debug=FALSE)
+   print(c("Done processing sdf file: ", args)
 }
 
 main()
