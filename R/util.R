@@ -2,7 +2,7 @@ NULL
 options(error=traceback, showWarnCalls=TRUE, showErrorCalls=TRUE)
 util<-new.env()
 
-assert <- function (expr, error, quitOnError) {
+assert <- function (expr, error, quitOnError=FALSE) {
   if (!expr) {
      flog.error("Reason: %s", sprintf("%s ", paste(error, collapse=", ")))
      stop(error, call. = TRUE)

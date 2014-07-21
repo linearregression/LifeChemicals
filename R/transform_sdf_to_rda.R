@@ -3,6 +3,8 @@
 # transform to RDA format, save this to output folder as in environment variable 
 # DATADIR
 ##################
+rm(list=ls()) #Dump all preexiting objects
+
 options(error=traceback, showWarnCalls=TRUE, showErrorCalls=TRUE)
 if (!exists('RUNNER_BASE')) RUNNER_BASE='/opt/andrew/LifeChemicals/R'
 source(sprintf("%s/util.R", RUNNER_BASE))
@@ -10,7 +12,7 @@ source(sprintf("%s/util.R", RUNNER_BASE))
 library("ChemmineR")
 library("futile.logger")
 
-init_environment<-function(logfile) {
+init_environment<-function(logfile="sdf2rda") {
    flog.logger("ROOT", DEBUG, appender=appender.file(paste(logfile, ".log", sep="")))
    #flog.layout(layout.format("[~l] [~t] [~n.~f] ~m"))
    #flog.appender(appender.console, "sdf2rda")
@@ -58,7 +60,7 @@ sdf_2_rda <- function(file, debug) {
    ) 
 }
 
-remove_processed_sdf<-function(sdffile, shouldRemove) {
+remove_processed_sdf<-function(sdffile, shouldRemove=FALSE) {
    if(shouldRemove) {
      assert(expr=!is.null(sdffile), error=c("Filename is missing"), quitOnError=FALSE)
      flog.info("Finished processing. Removing sdf %s", sdffile)
