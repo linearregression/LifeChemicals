@@ -96,7 +96,7 @@ check_last_process<-function(currentFile=NULL) {
         current.file<-basename(currentFile)
         flog.info("Lastfile processed %s current file: %s", previous.file, current.file)
         print(c("Lastfile processed: ", previous.file, "current file: ",current.file))
-        return(ret)
+        return((previous.file==current.file))
      } 
   } 
   flog.warn("Missing source file to process")
