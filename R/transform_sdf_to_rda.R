@@ -6,8 +6,8 @@
 rm(list=ls()) #Dump all preexiting objects
 
 options(error=traceback, showWarnCalls=TRUE, showErrorCalls=TRUE)
-if (!exists('RUNNER_BASE')) RUNNER_BASE='/opt/andrew/LifeChemicals/R'
-source(sprintf("%s/util.R", RUNNER_BASE))
+if (!exists('RUNNER_BASE')) RUNNER_BASE='/opt/andrew/LifeChemicals'
+source(sprintf("%s/R/util.R", RUNNER_BASE))
 
 library("ChemmineR")
 library("futile.logger")
@@ -15,7 +15,7 @@ library("futile.logger")
 lastprocessed.log<-"lastprocessed.log"
 
 init_environment<-function(logfile="sdf2rda") {
-   flog.logger("ROOT", DEBUG, appender=appender.file(paste(logfile, ".log", sep="")))
+   flog.logger("ROOT", DEBUG, appender=appender.file(paste(RUNNER_BASE, "/log/", logfile, ".log", sep="")))
    #flog.layout(layout.format("[~l] [~t] [~n.~f] ~m"))
    #flog.appender(appender.console, "sdf2rda")
    flog.info("Initializing environment")
