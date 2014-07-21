@@ -66,6 +66,7 @@ remove_processed_sdf<-function(sdffile, shouldRemove=FALSE) {
      flog.info("Finished processing. Removing sdf %s", sdffile)
      file.remove(sdffile)
      flog.info("Removed sdf %s", sdffile)
+     cat(paste(basename(sdffile)),file="lastprocessed.log")
    } else {
      flog.info("Not finish processing %s", sdffile)
    }
@@ -85,14 +86,39 @@ remove_processed_sdf<-function(sdffile, shouldRemove=FALSE) {
 #  rm(sdf.files)
 #}
 
+check_last_process<-function(currentFile=NULL) { 
+  if(!is.null(currentFile)) {
+     lastprocessed.log<-"lastprocessed.log"
+     line<-readChar(lastprocessed.log, file.info(lastprocessed.log)$size)
+     lastfile.processed<-gsub("[\r\n]", "", line)
+     if(!is.null(lastfile.processed)) {
+        previous.file<-basename(lastfile.processed)
+        current.file<-basename(currentFile)
+        flog.info("Lastfile processed %s current file: %s", previous.file, current.file)
+        print(c("Lastfile processed: ", previous.file, "current file: ",current.file))
+        return(ret)
+     } 
+  } 
+  flog.warn("Missing source file to process")
+  print("Missing source file to process")
+  FALSE
+}
+
 main<-function() {
   args<-commandArgs(trailingOnly=TRUE)
   print(c("Start processing sdf file: ", args))
+  cat("",file="lastprocessed.log") #seed the lastprocessed.log
   assert(expr=(nchar(args) >0 ), error=c("No input file provided"), quitOnError=TRUE)
   init_environment(logfile=basename(args))
   flog.info("Going to process file %s", args)
-  sdf_2_rda(file=args, debug=FALSE)
-   print(c("Done processing sdf file: ", args))
+  isfileprocessed <- check_last_process(args)
+  if(!isfileprocessed) { #no need to start from scratch each time
+    print(c("This is a new sdf file: ", args))
+    sdf_2_rda(file=args, debug=FALSE)
+    print(c("Done processing sdf file: ", args))
+  } else {
+    print(c("File already processed: ", args))
+ }
 }
 
 main()
